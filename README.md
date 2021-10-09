@@ -34,6 +34,7 @@ Note that this assumes SQL Server exists on localhost with Windows Auth enabled
 It is likely the API has started before SQL Server is fully healthy. Giving the API a nudge should get everything up and running. Getting a reliable health check on a SQL Server container has proven to be tricky.
 
 # Next Steps
+* Add paging to all GET endpoints, currently only on /product/{pageNumber} and /product/search/{searchTerm}/{pageNumber}
 * Better separate concerns, though it is neat that all logic is in <150 LoC
 * Add ability to toggle using an in-memory database or docker compose
 * Running docker-compose from Visual Studio does not work as expected, it could be some unexpected port mappings

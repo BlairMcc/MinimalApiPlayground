@@ -58,10 +58,13 @@ app.MapGet("/product/count", async (ProductContext dbcontext) =>
     return Results.Ok(count);
 });
 
-app.MapGet("/product/search/{searchName}", async (string searchName, ProductContext dbcontext) =>
+app.MapGet("/product/search/{searchTerm}/{pageNumber}", async (string searchTerm, int pageNumber, ProductContext dbcontext) =>
 {
+    var pageSize = app.Configuration.GetValue<int>("AppSettings:PageSize");
     var products = await dbcontext.Products
-        .Where(x => x.Name.Contains(searchName))
+        .Where(x => x.Name.Contains(searchTerm))
+        .Skip(pageNumber * pageSize)
+        .Take(pageSize)
         .ToListAsync();
     app.Logger.LogInformation($"/product/search Count: {products?.Count}");
     return Results.Ok(products);
@@ -77,6 +80,7 @@ app.MapPost("/product", async (Product product, ProductContext dbcontext, IValid
 
     dbcontext.Products.Add(product);
     await dbcontext.SaveChangesAsync();
+    app.Logger.LogInformation($"/product ID Created: {product?.Id}");
     return Results.Created($"/product/{product.Id}", product);
 });
 
