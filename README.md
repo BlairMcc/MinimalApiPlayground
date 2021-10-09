@@ -35,6 +35,5 @@ It is likely the API has started before SQL Server is fully healthy. Giving the 
 
 # Next Steps
 * Better separate concerns, though it is neat that all logic is in <150 LoC
-* Unit / integration tests
 * Add ability to toggle using an in-memory database or docker compose
 * Running docker-compose from Visual Studio does not work as expected, it could be some unexpected port mappings

@@ -30,7 +30,7 @@ await EnsureDb(app.Services, app.Logger);
 
 app.UseSwagger();
 
-app.MapGet("/", () => "Hello World! This is my product API using .Net 6 minimal web API, SQL Server and Docker Dev Environments");
+app.MapGet("/", () => "Hello World!");
 
 app.MapGet("/product/{pageNumber}", async (int pageNumber, ProductContext dbcontext) =>
 {
@@ -137,3 +137,6 @@ public static class ValidationExtensions
                        );
     }
 }
+
+// Make Program class visible to test projects
+public partial class Program { }
