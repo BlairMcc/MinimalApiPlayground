@@ -42,7 +42,7 @@ namespace MinimalApi.Tests
             // Assert
             Assert.AreEqual(System.Net.HttpStatusCode.BadRequest, response.StatusCode);
             var actual = await response.Content.ReadAsStringAsync();
-            Assert.IsTrue(actual.Contains("The length of 'Name' must be at least 1 characters. You entered 0 characters."));
+            Assert.IsTrue(actual.Contains("Name must contain between 1 and 128 characters."));
         }
     }
 }

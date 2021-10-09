@@ -1,16 +1,7 @@
 using FluentValidation;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
@@ -122,9 +113,9 @@ public class Product
     {
         public Validator()
         {
-            RuleFor(x => x.Name).NotNull().WithMessage("Name must not null");
-            RuleFor(x => x.Name).MinimumLength(1).MaximumLength(128).WithMessage("Name must contain between 1 and 128 characters");
-            RuleFor(x => x.Description).MaximumLength(1024).WithMessage("Description cannot contain more than 1024 characters");
+            RuleFor(x => x.Name).NotNull().WithMessage("Name must not be null.");
+            RuleFor(x => x.Name).Length(1, 128).WithMessage("Name must contain between 1 and 128 characters.");
+            RuleFor(x => x.Description).MaximumLength(1024).WithMessage("Description cannot contain more than 1024 characters.");
         }
     }
 }
