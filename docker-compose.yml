@@ -1,0 +1,47 @@
+version: '3.4'
+
+services:
+  api:
+    image: ${DOCKER_REGISTRY-}api
+    build:
+      context: .
+      dockerfile: api/Dockerfile
+    ports:
+      - 8081:80
+    depends_on: 
+      - sqlserver
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    restart: unless-stopped
+    ports:
+      - 1431:1433
+    healthcheck:
+      test: /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P "$${SA_PASSWORD}" -Q "SELECT 1" -b -o /dev/null
+      interval: 10s
+      timeout: 3s
+      retries: 10
+      start_period: 10s
+    #volumes:
+    #  - product_data:/var/opt/mssql
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=P@ssword1234
+      - MSSQL_PID=Developer
+  #postgres:
+  #  image: postgres:14.0-alpine
+  #  healthcheck:
+  #    test: [ "CMD", "pg_isready", "-q", "-d", "postgres", "-U", "root" ]
+  #    timeout: 45s
+  #    interval: 10s
+  #    retries: 10
+  #  restart: always
+  #  environment:
+  #    - POSTGRES_USER=root
+  #    - POSTGRES_PASSWORD=password
+  #    - APP_DB_USER=docker
+  #    - APP_DB_PASS=docker
+  #    - APP_DB_NAME=docker
+  #  #volumes:
+  #  #  - ./db:/docker-entrypoint-initdb.d/
+  #  ports:
+  #    - 5432:5432
