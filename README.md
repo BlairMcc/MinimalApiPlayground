@@ -7,22 +7,26 @@ A playground app to explore the following technologies
 
 # How to Build
 ## Docker
-Resources
-* Swagger - http://localhost:8081/swagger/index.html
-* Microsoft SQL Server - localhost,1431
-
 ### Docker Dev Environments
 1. Use the repo URL - https://github.com/BlairMcc/MinimalApiPlayground
 2. Once created Open it in VS Code
 3. Open Terminal (Ctrl+~), run 'docker compose up -d' (Docker Desktop does not do this, I'm unsure why)
+
 See here for more information - https://docs.docker.com/desktop/dev-environments/
 
 ### Docker Compose
 1. Navigate to root of repo in cmdline 
 2. Run 'docker compose up -d'
 
+###
+Resources
+* API - http://localhost:8081/
+* Swagger - http://localhost:8081/swagger/index.html
+* Microsoft SQL Server - localhost,1431
+
 ## Local
 1. Run MinimalAPI from Visual Studio
+
 Note that this assumes SQL Server exists on localhost with Windows Auth enabled 
 
 # Help
