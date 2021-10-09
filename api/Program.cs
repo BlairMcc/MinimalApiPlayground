@@ -16,7 +16,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(setup => setup.SwaggerDoc("v1", new OpenApiInfo()
 {
-    Description = "Product API using .Net 6 minimal web API, PostgreSQL, Docker Dev Environments",
+    Description = "Product API using .Net 6 minimal web API, SQL Server, Docker Dev Environments",
     Title = "Product API",
     Version = "v1"
 })
@@ -32,14 +32,18 @@ app.UseSwagger();
 
 app.MapGet("/", () => "Hello World!");
 
-app.MapGet("/product", async (ProductContext dbcontext) =>
+app.MapGet("/product/{pageNumber}", async (int pageNumber, ProductContext dbcontext) =>
 {
-    var products = await dbcontext.Products.ToListAsync();
+    var pageSize = app.Configuration.GetValue<int>("AppSettings:PageSize");
+    var products = await dbcontext.Products
+        .Skip(pageNumber * pageSize)
+        .Take(pageSize)
+        .ToListAsync();
     app.Logger.LogInformation($"/product Count: {products.Count}");
     return Results.Ok(products);
 });
 
-app.MapGet("/product/{id}", async (int id, ProductContext dbcontext) =>
+app.MapGet("/product/find/{id}", async (int id, ProductContext dbcontext) =>
 {
     var result = await dbcontext.Products.FindAsync(id) is Product product ? Results.Ok(product) : Results.NotFound(id);
     app.Logger.LogInformation($"/product/{id}:");
@@ -54,10 +58,10 @@ app.MapGet("/product/count", async (ProductContext dbcontext) =>
     return Results.Ok(count);
 });
 
-app.MapGet("/product/search", async (string searchName, ProductContext dbcontext) =>
+app.MapGet("/product/search/{searchName}", async (string searchName, ProductContext dbcontext) =>
 {
     var products = await dbcontext.Products
-        .Where(x => x.Name.Contains(searchName, StringComparison.InvariantCultureIgnoreCase))
+        .Where(x => x.Name.Contains(searchName))
         .ToListAsync();
     app.Logger.LogInformation($"/product/search Count: {products?.Count}");
     return Results.Ok(products);
@@ -80,7 +84,6 @@ app.UseSwaggerUI();
 
 app.Run();
 
-
 async Task EnsureDb(IServiceProvider services, ILogger logger)
 {
     using (var db = services.CreateScope().ServiceProvider.GetRequiredService<ProductContext>())
@@ -98,7 +101,6 @@ public class ProductContext : DbContext
     }
 
     public DbSet<Product> Products { get; set; }
-
 }
 
 public class Product
@@ -116,9 +118,9 @@ public class Product
     {
         public Validator()
         {
-            RuleFor(x => x.Name).NotNull().WithMessage("name_required");
-            RuleFor(x => x.Name).MinimumLength(1).MaximumLength(128).WithMessage("name_minlength1_maxlength1024");
-            RuleFor(x => x.Description).MaximumLength(1024).WithMessage("description_maxlength1024");
+            RuleFor(x => x.Name).NotNull().WithMessage("Name must not null");
+            RuleFor(x => x.Name).MinimumLength(1).MaximumLength(128).WithMessage("Name must contain between 1 and 128 characters");
+            RuleFor(x => x.Description).MaximumLength(1024).WithMessage("Description cannot contain more than 1024 characters");
         }
     }
 }
